@@ -5,14 +5,25 @@ REGION="us-east-1"
 
 if command -v dnf >/dev/null 2>&1; then
   sudo dnf update -y
-  sudo dnf install -y docker jq unzip curl
+  sudo dnf install -y docker jq unzip
 else
   sudo yum update -y
-  sudo yum install -y docker jq unzip curl
+  sudo yum install -y docker jq unzip
+fi
+
+if ! command -v curl >/dev/null 2>&1; then
+  echo "curl nao encontrado apos instalacao de pacotes"
+  exit 1
+fi
+
+if ! command -v docker >/dev/null 2>&1; then
+  echo "docker nao encontrado apos instalacao de pacotes"
+  exit 1
 fi
 
 sudo systemctl enable docker
 sudo systemctl start docker
+sudo systemctl is-active --quiet docker
 sudo usermod -a -G docker ec2-user
 
 for i in {1..20}; do

@@ -31,12 +31,15 @@ resource "aws_instance" "web" {
     inline = [
       "chmod +x /tmp/script.sh",
       "sudo /tmp/script.sh",
+      "for i in $(seq 1 20); do sudo systemctl is-active --quiet docker && break; sleep 2; done",
+      "sudo systemctl is-active --quiet docker",
       "sudo cp /tmp/ecr-login.sh /etc/systemd/system/ecr-login.sh",
       "sudo chmod +x /etc/systemd/system/ecr-login.sh",
       "sudo cp /tmp/docker_ecr_login.service /etc/systemd/system/docker_ecr_login.service",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable docker_ecr_login",
-      "sudo systemctl start docker_ecr_login"
+      "sudo systemctl restart docker_ecr_login",
+      "sudo systemctl --no-pager --full status docker_ecr_login"
 
     ]
   }
